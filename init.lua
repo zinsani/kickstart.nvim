@@ -448,10 +448,20 @@ local servers = {
   -- gopls = {},
   -- pyright = {},
   -- rust_analyzer = {},
+  svelte = {},
   tsserver = {},
-  volar = {},
+  volar = {
+    completion= {
+      format= {
+        defaultFormatter = {
+          vue = "prettier"
+        }
+      }
+    }},
   eslint = {},
   cssls = {},
+  emmetls = {},
+  yamlls = {},
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
