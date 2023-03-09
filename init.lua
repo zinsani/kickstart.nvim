@@ -181,6 +181,9 @@ require('lazy').setup({
   {
     'mhartington/formatter.nvim',
   },
+  {
+    'MunifTanjim/prettier.nvim',
+  },
 
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
@@ -599,4 +602,24 @@ require("formatter").setup {
 }
 
 vim.api.nvim_create_autocmd("BufWritePost", { callback = function() vim.cmd "FormatWrite" end })
---
+
+local prettier = require("prettier")
+
+prettier.setup({
+  bin = 'prettier', -- or `'prettierd'` (v0.23.3+)
+  filetypes = {
+    "css",
+    "graphql",
+    "html",
+    "javascript",
+    "javascriptreact",
+    "json",
+    "less",
+    "markdown",
+    "scss",
+    "typescript",
+    "typescriptreact",
+    "yaml",
+    "vue"
+  },
+})
