@@ -455,14 +455,7 @@ local servers = {
   -- rust_analyzer = {},
   svelte = {},
   tsserver = {},
-  volar = {
-    completion= {
-      format= {
-        defaultFormatter = {
-          vue = "prettier"
-        }
-      }
-    }},
+  volar = {},
   eslint = {},
   cssls = {},
   emmet_ls = {},
