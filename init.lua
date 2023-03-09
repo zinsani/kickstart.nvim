@@ -337,7 +337,7 @@ vim.keymap.set('n', '<leader>gs', '<Cmd>Git<Cr>', { desc = '[G]it [S]tatus' })
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
   ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'help', 'vim', 'vue', 'svelte',
-    'javascript', 'scss', 'css', 'sass' },
+    'javascript', 'scss', 'css' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = false,
