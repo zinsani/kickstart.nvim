@@ -460,7 +460,7 @@ local servers = {
     }},
   eslint = {},
   cssls = {},
-  emmetls = {},
+  emmet_ls = {},
   yamlls = {},
   lua_ls = {
     Lua = {
