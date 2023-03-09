@@ -171,6 +171,16 @@ require('lazy').setup({
       pcall(require('nvim-treesitter.install').update { with_sync = true })
     end,
   },
+  {
+    "kylechui/nvim-surround",
+    tag = "*", -- Use for stability; omit to use `main` branch for the latest features
+    config = function()
+      require("nvim-surround").setup {}
+    end
+  },
+  {
+    'mhartington/formatter.nvim',
+  },
 
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
@@ -197,6 +207,7 @@ vim.o.hlsearch = false
 
 -- Make line numbers default
 vim.wo.number = true
+vim.wo.relativenumber = true
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
@@ -230,6 +241,31 @@ vim.o.completeopt = 'menuone,noselect'
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
 
+vim.opt.smarttab = true
+vim.opt.smartindent = true
+vim.opt.title = true
+vim.opt.incsearch = true
+vim.opt.tabstop = 2
+vim.opt.softtabstop = 0
+vim.opt.expandtab = true
+vim.opt.shiftwidth = 2
+
+vim.opt.autoindent = true
+-- window-scoped
+vim.opt.cursorline = true
+-- global scope
+vim.opt.autowrite = true
+vim.opt.wildignore = '*/cache/*,*/tmp/*,*/node_modules/*'
+
+vim.opt.wildignore:append({ "*.so", "*.swp", "*.zip", "*.pyc", "**/.git/**" })
+vim.opt.wildignore:append({ "**/node_modules/**" })
+vim.opt.wildignore:append({ "**/elm-stuff/**", "**/.cache/**", "**/.parcel-cache/**" })
+vim.opt.wildignore:append({ "*.o", "*.out", "*.obj", "*.so", "*.pyc" })
+vim.opt.wildignore:append({ "*.zip", "*.tar.gz", "*.tar.bz2", "*.rar", "*.tar.xz" })
+vim.opt.wildignore:append({ "*/.sass-cache/*" })
+vim.opt.wildignore:append({ "*.swp", "*~", "._*" })
+vim.opt.undodir = vim.fn.stdpath('config') .. "/undodir"
+vim.opt.undofile = true
 -- [[ Basic Keymaps ]]
 
 -- Keymaps for better default experience
@@ -278,6 +314,7 @@ vim.keymap.set('n', '<leader>/', function()
   })
 end, { desc = '[/] Fuzzily search in current buffer' })
 
+vim.keymap.set('n', '<leader>sp', require('telescope.builtin').git_files, { desc = '[S]earch [ ] Git Files' })
 vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
 vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
@@ -411,8 +448,10 @@ local servers = {
   -- gopls = {},
   -- pyright = {},
   -- rust_analyzer = {},
-  -- tsserver = {},
-
+  tsserver = {},
+  volar = {},
+  eslint = {},
+  cssls = {},
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
@@ -495,3 +534,59 @@ cmp.setup {
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+-- formatter
+
+local util = require "formatter.util"
+
+-- Provides the Format, FormatWrite, FormatLock, and FormatWriteLock commands
+require("formatter").setup {
+  -- Enable or disable logging
+  logging = false,
+  -- Set the log level
+  log_level = vim.log.levels.WARN,
+  -- All formatter configurations are opt-in
+  filetype = {
+    -- Formatter configurations for filetype "lua" go here
+    -- and will be executed in order
+    lua = {
+      -- "formatter.filetypes.lua" defines default configurations for the
+      -- "lua" filetype
+      require("formatter.filetypes.lua").stylua,
+
+      -- You can also define your own configuration
+      function()
+        -- Supports conditional formatting
+        if util.get_current_buffer_file_name() == "special.lua" then
+          return nil
+        end
+
+        -- Full specification of configurations is down below and in Vim help
+        -- files
+        return {
+          exe = "stylua",
+          args = {
+            "--search-parent-directories",
+            "--stdin-filepath",
+            util.escape_path(util.get_current_buffer_file_path()),
+            "--",
+            "-",
+          },
+          stdin = true,
+        }
+      end
+    },
+    vue = {
+      require("formatter.filetypes.vue").prettier,
+    },
+    -- Use the special "*" filetype for defining formatter configurations on
+    -- any filetype
+    ["*"] = {
+      -- "formatter.filetypes.any" defines default configurations for any
+      -- filetype
+      require("formatter.filetypes.any").remove_trailing_whitespace
+    }
+  }
+}
+
+vim.api.nvim_create_autocmd("BufWritePost", { callback = function() vim.cmd "FormatWrite" end })
+--
