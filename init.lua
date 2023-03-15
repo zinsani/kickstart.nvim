@@ -267,7 +267,7 @@ vim.opt.cursorline = true
 vim.opt.autowrite = true
 vim.opt.wildignore = '*/cache/*,*/tmp/*,*/node_modules/*'
 
-vim.opt.wildignore:append({ "*.so", "*.swp", "*.zip", "*.pyc", "**/.git/**" })
+vim.opt.wildignore:append({ "*.so", "*.swp", "*.zip", "*.pyc", "**/.git/**", "**/node_modules/**" })
 vim.opt.wildignore:append({ "**/node_modules/**" })
 vim.opt.wildignore:append({ "**/elm-stuff/**", "**/.cache/**", "**/.parcel-cache/**" })
 vim.opt.wildignore:append({ "*.o", "*.out", "*.obj", "*.so", "*.pyc" })
@@ -420,7 +420,8 @@ local on_attach = function(client, bufnr)
       desc = 'LSP: ' .. desc
     end
 
-    vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+    local opt = { buffer = bufnr, desc = desc, noremap = true }
+    vim.keymap.set('n', keys, func, opt)
   end
 
   nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
@@ -432,7 +433,13 @@ local on_attach = function(client, bufnr)
   nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
-  nmap('<leader>f', function() vim.lsp.buf.format { async = true } end, '[F]ormat current document')
+  -- nmap('<leader>f', function() vim.lsp.buf.format { async = true } end, '[F]ormat current document')
+nmap('<leader>g2', ":diffget //2<CR>", "[G]it diff get left  [2]")
+nmap('<leader>g3', ":diffget //3<CR>", "[G]it diff get right [3]")
+nmap('<leader>gll', ":G log --graph --oneline --decorate<CR>", "[G]it log [1] line")
+nmap('<leader>glg', ":G log --graph --all --decorate<CR>", "[G]it log [G]raph with all branches")
+nmap('<leader>gp', ":G push <CR>")
+nmap('<leader>gu', ":G pull <CR>")
 
   -- See `:help K` for why this keymap
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
